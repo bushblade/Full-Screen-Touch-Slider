@@ -1,0 +1,49 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.slider-container {
+  scroll-snap-type: x mandatory;
+  scroll-snap-stop: always;
+  height: 98vh;
+  display: grid;
+  grid-template-columns: repeat(5, 100vw);
+  overflow-y: hidden;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  /* overflow: hidden; */
+  scrollbar-width: none;
+  
+}
+
+.slide{
+  scroll-snap-align: start;
+  max-height: 98vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  /* transform: translateX(0); */
+  /* will-change: transform; */
+  /* overflow: hidden; */
+}
+
+.slide>img{
+  max-width: 100%;
+  max-height: 100%;
+}
+
+
+
+
+
+
