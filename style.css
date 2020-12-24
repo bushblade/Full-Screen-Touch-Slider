@@ -9,32 +9,27 @@ html, body {
   padding: 0;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 .slider-container {
-  scroll-snap-type: x mandatory;
-  scroll-snap-stop: always;
   height: 98vh;
-  display: grid;
-  grid-template-columns: repeat(5, 100vw);
-  overflow-y: hidden;
-  overflow-x: scroll;
+  display: inline-flex;
   scroll-behavior: smooth;
-  /* overflow: hidden; */
+  overflow: hidden;
   scrollbar-width: none;
-  
+  transform: translateX(0);
+  will-change: transform;
+  transition: transform 0.2s ease;
 }
 
 .slide{
-  scroll-snap-align: start;
   max-height: 98vh;
+  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  /* transform: translateX(0); */
-  /* will-change: transform; */
-  /* overflow: hidden; */
 }
 
 .slide>img{

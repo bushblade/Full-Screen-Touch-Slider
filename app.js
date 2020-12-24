@@ -3,48 +3,51 @@ const slider = document.querySelector('.slider-container'),
   initialWindowWidth = window.innerWidth
 
 let isDragging = false,
-  dragDirection = null,
-  startPos = null,
-  translateX = 0
+  startPos = 0,
+  currentTranslate = 0,
+  prevTranslate = 0,
+  animationID,
+  currentIndex = 0
 
-slides.forEach((slide) => {
+slides.forEach((slide, index) => {
   const slideImage = slide.querySelector('img')
   // disable default image drag
   slideImage.addEventListener('dragstart', (e) => e.preventDefault())
-  slide.addEventListener('touchstart', dragStart)
+  slide.addEventListener('touchstart', (e) => {
+    currentIndex = index
+    dragStart(e)
+  })
   // slide.addEventListener('mousedown', dragStart)
   slide.addEventListener('touchend', touchEnd)
   slide.addEventListener('touchmove', touchMove)
 })
 
 function dragStart(event) {
-  console.log('dragging', event)
+  console.log('drag start')
   startPos = event.touches[0].clientX
-  console.log(startPos)
+  isDragging = true
+  animationID = requestAnimationFrame(animation)
 }
 
 function touchEnd(event) {
-  console.log(event.type)
-  console.log('finished dragging')
+  isDragging = false
+  prevTranslate = currentTranslate
+  cancelAnimationFrame(animationID)
+  // console.log(event.type)
+  // console.log('finished dragging')
 }
 
 function touchMove(event) {
-  const clientX = event.touches[0].clientX
-  // console.log(event.touches[0].screenX)
-  dragDirection = clientX > startPos ? 'right' : 'left'
+  if (isDragging) {
+    const currentPosition = event.touches[0].clientX
+    currentTranslate = prevTranslate + currentPosition - startPos
+    // slider.style.transform = `currentTranslate(${currentTranslate + diff}px)`
+  }
+}
 
-  // calculate how much to translate by
-
-  // dragDirection === 'left'
-  //   ? (translateX = startPos + clientX)
-  //   : (translateX = startPos - clientX)
-  translateX = clientX - startPos
-
-  console.clear()
-  console.log('translateX', translateX)
-
-  // slider.style.transform = `translateX(${translateX}px)`
-
-  console.log('dragging', dragDirection)
-  console.log('start position', startPos)
+function animation(timeStamp) {
+  slider.style.transform = `translateX(${currentTranslate}px)`
+  if (isDragging) {
+    requestAnimationFrame(animation)
+  }
 }
