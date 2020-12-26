@@ -9,6 +9,9 @@ let isDragging = false,
   animationID,
   currentIndex = 0
 
+// TODO
+// add event listeners for mousedown and move
+
 slides.forEach((slide, index) => {
   const slideImage = slide.querySelector('img')
   // disable default image drag
@@ -23,31 +26,59 @@ slides.forEach((slide, index) => {
 })
 
 function dragStart(event) {
-  console.log('drag start')
+  console.log('current index', currentIndex)
   startPos = event.touches[0].clientX
   isDragging = true
   animationID = requestAnimationFrame(animation)
 }
 
+// TODO
+// when touch end, center the indexed image if moved enough
+// or go back to previous image if not moved far enough
+
 function touchEnd(event) {
-  isDragging = false
-  prevTranslate = currentTranslate
   cancelAnimationFrame(animationID)
-  // console.log(event.type)
-  // console.log('finished dragging')
+  isDragging = false
+  const movedBy = currentTranslate - prevTranslate
+  console.log(movedBy)
+  // this leaves it where it is scrolled to
+  prevTranslate = currentTranslate
+  // if not moved enough then snap back to current index
+  if (Math.abs(movedBy) < 100) {
+    currentTranslate = currentIndex * -window.innerWidth
+    prevTranslate = currentTranslate
+  }
+  // if moved enough negative snap to next slide
+  if (movedBy < -100 && currentIndex < slides.length - 1) {
+    console.log('moving to next slide')
+    currentIndex += 1
+  }
+  // if movedby enough positive snap to previous slide if there is one
+  if (movedBy > 100 && currentIndex > 0) {
+    console.log('moving to prev slide')
+    currentIndex -= 1
+  }
+  currentTranslate = currentIndex * -window.innerWidth
+  prevTranslate = currentTranslate
+
+  // if moved enough positive snap to prev slide
+  setSliderPosition()
 }
 
 function touchMove(event) {
   if (isDragging) {
     const currentPosition = event.touches[0].clientX
     currentTranslate = prevTranslate + currentPosition - startPos
-    // slider.style.transform = `currentTranslate(${currentTranslate + diff}px)`
   }
 }
 
 function animation(timeStamp) {
-  slider.style.transform = `translateX(${currentTranslate}px)`
+  setSliderPosition()
   if (isDragging) {
     requestAnimationFrame(animation)
   }
+}
+
+function setSliderPosition() {
+  slider.style.transform = `translateX(${currentTranslate}px)`
 }
