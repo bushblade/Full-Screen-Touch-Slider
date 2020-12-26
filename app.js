@@ -8,27 +8,32 @@ let isDragging = false,
   animationID,
   currentIndex = 0
 
-// TODO
-// add event listeners for mousedown and move
-
 slides.forEach((slide, index) => {
   const slideImage = slide.querySelector('img')
   // disable default image drag
   slideImage.addEventListener('dragstart', (e) => e.preventDefault())
-  slide.addEventListener('touchstart', (e) => {
-    currentIndex = index
-    dragStart(e)
-  })
-  // slide.addEventListener('mousedown', dragStart)
+  // touch events
+  slide.addEventListener('touchstart', dragStart(index))
   slide.addEventListener('touchend', touchEnd)
   slide.addEventListener('touchmove', touchMove)
+  // mouse events
+  slide.addEventListener('mousedown', dragStart(index))
+  slide.addEventListener('mouseup', touchEnd)
+  slide.addEventListener('mousemove', touchMove)
 })
 
-function dragStart(event) {
-  startPos = event.touches[0].clientX
-  isDragging = true
-  animationID = requestAnimationFrame(animation)
-  slider.classList.add('grabbing')
+function getPositionX(event) {
+  return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX
+}
+
+function dragStart(index) {
+  return function (event) {
+    currentIndex = index
+    startPos = getPositionX(event)
+    isDragging = true
+    animationID = requestAnimationFrame(animation)
+    slider.classList.add('grabbing')
+  }
 }
 
 function touchEnd() {
@@ -54,7 +59,7 @@ function touchEnd() {
 
 function touchMove(event) {
   if (isDragging) {
-    const currentPosition = event.touches[0].clientX
+    const currentPosition = getPositionX(event)
     currentTranslate = prevTranslate + currentPosition - startPos
   }
 }
