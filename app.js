@@ -22,6 +22,8 @@ slides.forEach((slide, index) => {
   slide.addEventListener('mousemove', touchMove)
 })
 
+window.addEventListener('resize', setPositionByIndex)
+
 function getPositionX(event) {
   return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX
 }
@@ -50,10 +52,8 @@ function touchEnd() {
   if (movedBy > 100 && currentIndex > 0) {
     currentIndex -= 1
   }
-  currentTranslate = currentIndex * -window.innerWidth
-  prevTranslate = currentTranslate
+  setPositionByIndex()
 
-  setSliderPosition()
   slider.classList.remove('grabbing')
 }
 
@@ -69,6 +69,12 @@ function animation() {
   if (isDragging) {
     requestAnimationFrame(animation)
   }
+}
+
+function setPositionByIndex() {
+  currentTranslate = currentIndex * -window.innerWidth
+  prevTranslate = currentTranslate
+  setSliderPosition()
 }
 
 function setSliderPosition() {

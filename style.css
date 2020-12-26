@@ -15,7 +15,7 @@ html, body {
 .slider-container {
   height: 98vh;
   display: inline-flex;
-  scroll-behavior: smooth;
+  scrollbar-width: none;
   overflow: hidden;
   scrollbar-width: none;
   transform: translateX(0);
@@ -30,7 +30,13 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
+  padding: 1rem;
+}
+
+@media(min-width: 1000px){
+  .slide {
+    padding: 3rem;
+  }
 }
 
 .slide>img{
