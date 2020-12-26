@@ -13,23 +13,31 @@ slides.forEach((slide, index) => {
   // disable default image drag
   slideImage.addEventListener('dragstart', (e) => e.preventDefault())
   // touch events
-  slide.addEventListener('touchstart', dragStart(index))
+  slide.addEventListener('touchstart', touchStart(index))
   slide.addEventListener('touchend', touchEnd)
   slide.addEventListener('touchmove', touchMove)
   // mouse events
-  slide.addEventListener('mousedown', dragStart(index))
+  slide.addEventListener('mousedown', touchStart(index))
   slide.addEventListener('mouseup', touchEnd)
   slide.addEventListener('mousemove', touchMove)
   slide.addEventListener('mouseleave', touchEnd)
 })
 
+// make responsive to viewport changes
 window.addEventListener('resize', setPositionByIndex)
+
+// prevent menu popup on long press
+window.oncontextmenu = function (event) {
+  event.preventDefault()
+  event.stopPropagation()
+  return false
+}
 
 function getPositionX(event) {
   return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX
 }
 
-function dragStart(index) {
+function touchStart(index) {
   return function (event) {
     currentIndex = index
     startPos = getPositionX(event)
@@ -39,25 +47,6 @@ function dragStart(index) {
   }
 }
 
-function touchEnd() {
-  cancelAnimationFrame(animationID)
-  isDragging = false
-  const movedBy = currentTranslate - prevTranslate
-
-  // if moved enough negative snap to next slide
-  if (movedBy < -100 && currentIndex < slides.length - 1) {
-    currentIndex += 1
-  }
-
-  // if moved enough positive snap to previous slide if there is one
-  if (movedBy > 100 && currentIndex > 0) {
-    currentIndex -= 1
-  }
-  setPositionByIndex()
-
-  slider.classList.remove('grabbing')
-}
-
 function touchMove(event) {
   if (isDragging) {
     const currentPosition = getPositionX(event)
@@ -65,11 +54,25 @@ function touchMove(event) {
   }
 }
 
+function touchEnd() {
+  cancelAnimationFrame(animationID)
+  isDragging = false
+  const movedBy = currentTranslate - prevTranslate
+
+  // if moved enough negative then snap to next slide if there is one
+  if (movedBy < -100 && currentIndex < slides.length - 1) currentIndex += 1
+
+  // if moved enough positive then snap to previous slide if there is one
+  if (movedBy > 100 && currentIndex > 0) currentIndex -= 1
+
+  setPositionByIndex()
+
+  slider.classList.remove('grabbing')
+}
+
 function animation() {
   setSliderPosition()
-  if (isDragging) {
-    requestAnimationFrame(animation)
-  }
+  if (isDragging) requestAnimationFrame(animation)
 }
 
 function setPositionByIndex() {
