@@ -30,7 +30,7 @@ function dragStart(event) {
   animationID = requestAnimationFrame(animation)
 }
 
-function touchEnd(event) {
+function touchEnd() {
   cancelAnimationFrame(animationID)
   isDragging = false
   const movedBy = currentTranslate - prevTranslate
@@ -57,7 +57,7 @@ function touchMove(event) {
   }
 }
 
-function animation(timeStamp) {
+function animation() {
   setSliderPosition()
   if (isDragging) {
     requestAnimationFrame(animation)
