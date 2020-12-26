@@ -20,6 +20,7 @@ slides.forEach((slide, index) => {
   slide.addEventListener('mousedown', dragStart(index))
   slide.addEventListener('mouseup', touchEnd)
   slide.addEventListener('mousemove', touchMove)
+  slide.addEventListener('mouseleave', touchEnd)
 })
 
 window.addEventListener('resize', setPositionByIndex)
