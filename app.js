@@ -1,6 +1,5 @@
 const slider = document.querySelector('.slider-container'),
-  slides = Array.from(document.querySelectorAll('.slide')),
-  initialWindowWidth = window.innerWidth
+  slides = Array.from(document.querySelectorAll('.slide'))
 
 let isDragging = false,
   startPos = 0,
@@ -26,42 +25,28 @@ slides.forEach((slide, index) => {
 })
 
 function dragStart(event) {
-  console.log('current index', currentIndex)
   startPos = event.touches[0].clientX
   isDragging = true
   animationID = requestAnimationFrame(animation)
 }
 
-// TODO
-// when touch end, center the indexed image if moved enough
-// or go back to previous image if not moved far enough
-
 function touchEnd(event) {
   cancelAnimationFrame(animationID)
   isDragging = false
   const movedBy = currentTranslate - prevTranslate
-  console.log(movedBy)
-  // this leaves it where it is scrolled to
-  prevTranslate = currentTranslate
-  // if not moved enough then snap back to current index
-  if (Math.abs(movedBy) < 100) {
-    currentTranslate = currentIndex * -window.innerWidth
-    prevTranslate = currentTranslate
-  }
+
   // if moved enough negative snap to next slide
   if (movedBy < -100 && currentIndex < slides.length - 1) {
-    console.log('moving to next slide')
     currentIndex += 1
   }
-  // if movedby enough positive snap to previous slide if there is one
+
+  // if moved enough positive snap to previous slide if there is one
   if (movedBy > 100 && currentIndex > 0) {
-    console.log('moving to prev slide')
     currentIndex -= 1
   }
   currentTranslate = currentIndex * -window.innerWidth
   prevTranslate = currentTranslate
 
-  // if moved enough positive snap to prev slide
   setSliderPosition()
 }
 
