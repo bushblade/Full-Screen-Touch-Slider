@@ -20,7 +20,12 @@ html, body {
   scrollbar-width: none;
   transform: translateX(0);
   will-change: transform;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease-out;
+  cursor: grab;
+}
+
+.grabbing {
+  cursor: grabbing;
 }
 
 .slide{

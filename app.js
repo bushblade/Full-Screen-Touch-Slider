@@ -28,6 +28,7 @@ function dragStart(event) {
   startPos = event.touches[0].clientX
   isDragging = true
   animationID = requestAnimationFrame(animation)
+  slider.classList.add('grabbing')
 }
 
 function touchEnd() {
@@ -48,6 +49,7 @@ function touchEnd() {
   prevTranslate = currentTranslate
 
   setSliderPosition()
+  slider.classList.remove('grabbing')
 }
 
 function touchMove(event) {
