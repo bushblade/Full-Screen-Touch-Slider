@@ -1,4 +1,7 @@
+'use strict';
 const spawnSliderOn = function(baseSelector) {
+  console.log(`Spawning slider: ${baseSelector}`);
+
   // get our elements
   const slider = document.querySelector(`${baseSelector} .slider-container`),
     slides = Array.from(document.querySelectorAll(`${baseSelector} .slider-container .slide`))
@@ -17,8 +20,8 @@ const spawnSliderOn = function(baseSelector) {
     allowScrollEventPropagation = true
 
   // Add event listeners for clicks
-  let sliderPrevControl = document.querySelector(`${baseSelector} .slider-controls .slider-prev-control`)
-  let sliderNextControl = document.querySelector(`${baseSelector} .slider-controls .slider-next-control`)
+  const sliderPrevControl = document.querySelector(`${baseSelector} .slider-controls .slider-prev-control`)
+  const sliderNextControl = document.querySelector(`${baseSelector} .slider-controls .slider-next-control`)
 
   if (sliderPrevControl !== null) {
     sliderPrevControl.addEventListener('click', goPrev)
@@ -27,22 +30,28 @@ const spawnSliderOn = function(baseSelector) {
     sliderNextControl.addEventListener('click', goNext)
   }
 
+  if (slides.length >= 2) {
+    sliderNextControl.disabled = false;
+  }
+
   // add our event listeners
   slides.forEach((slide, index) => {
-    const slideImage = slide.querySelector('img')
+    const slideContents = slide.querySelector('.slide-contents')
     // disable default image drag
-    slideImage.addEventListener('dragstart', function(event) { event.preventDefault() } )
-    // touch events
-    slide.addEventListener('touchstart', touchStart(index))
-    slide.addEventListener('touchend', touchEnd)
-    slide.addEventListener('touchmove', touchMove)
-    // mouse events
-    slide.addEventListener('mousedown', touchStart(index))
-    slide.addEventListener('mouseup', touchEnd)
-    slide.addEventListener('mousemove', touchMove)
-    slide.addEventListener('mouseleave', touchEnd)
-    // horizontal mouse wheel / touch pad slide events
-    slide.addEventListener('wheel', scrollEnd)
+    slideContents.addEventListener('dragstart', function(event) { event.preventDefault() } )
+    if (slides.length >= 2) {
+      // touch events
+      slide.addEventListener('touchstart', touchStart(index))
+      slide.addEventListener('touchend', touchEnd)
+      slide.addEventListener('touchmove', touchMove)
+      // mouse events
+      slide.addEventListener('mousedown', touchStart(index))
+      slide.addEventListener('mouseup', touchEnd)
+      slide.addEventListener('mousemove', touchMove)
+      slide.addEventListener('mouseleave', touchEnd)
+      // horizontal mouse wheel / touch pad slide events
+      slide.addEventListener('wheel', scrollEnd)
+    }
   })
 
   // make responsive to viewport changes
@@ -175,7 +184,7 @@ const spawnSliderOn = function(baseSelector) {
     setSliderPosition()
 
     if (doScrollIntoView === true) {
-      slider.scrollIntoView({behavior: "smooth", block: "end", inline: "center"});
+			document.querySelector(`${baseSelector}`).scrollIntoView({behavior: "smooth", block: "end", inline: "center"});
     }
   }
 

@@ -31,7 +31,7 @@
   justify-content: center;
 }
 
-.slide img {
+.slide .slide-contents {
   max-width: 100%;
   max-height: 100%;
   transition: transform var(--transition-speed) ease-in-out;
@@ -43,7 +43,7 @@
   cursor: grabbing;
 }
 
-.grabbing .slide img {
+.grabbing .slide .slide-contents {
   transform: scale(0.97);
 }
 

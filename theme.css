@@ -3,14 +3,28 @@
   --transition-speed: 200ms
 }
 
-html,
-body {
-  padding: 0;
-  margin: 0;
-}
-
 * {
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  line-height: 1.5;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+p {
+  hyphens: auto;
+	text-align: justify;
+}
+
+html,
+body {
   padding: 0;
   margin: 0;
 }
@@ -34,13 +48,13 @@ body {
   }
 }
 
-.slide img {
+.slide .slide-contents {
   transition-duration: var(--transition-speed);
   box-shadow: 5px 5px 50px -1px var(--shadow);
   border-radius: 4px;
 }
 
-.grabbing .slide img {
+.grabbing .slide .slide-contents {
   transform: scale(0.95);
   box-shadow: 5px 5px 40px -1px var(--shadow);
 }
