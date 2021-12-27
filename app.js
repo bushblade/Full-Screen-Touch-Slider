@@ -3,6 +3,9 @@ const spawnSliderOn = function(baseSelector) {
   const slider = document.querySelector(`${baseSelector} .slider-container`),
     slides = Array.from(document.querySelectorAll(`${baseSelector} .slider-container .slide`))
 
+  const horizontalSensitivity = 100,
+    verticalSensitivity = 10
+
   // set up our state
   let isDragging = false,
     startPos = 0,
@@ -17,8 +20,12 @@ const spawnSliderOn = function(baseSelector) {
   let sliderPrevControl = document.querySelector(`${baseSelector} .slider-controls .slider-prev-control`)
   let sliderNextControl = document.querySelector(`${baseSelector} .slider-controls .slider-next-control`)
 
-  sliderPrevControl.addEventListener('click', goPrev)
-  sliderNextControl.addEventListener('click', goNext)
+  if (sliderPrevControl !== null) {
+    sliderPrevControl.addEventListener('click', goPrev)
+  }
+  if (sliderNextControl !== null) {
+    sliderNextControl.addEventListener('click', goNext)
+  }
 
   // add our event listeners
   slides.forEach((slide, index) => {
@@ -42,7 +49,7 @@ const spawnSliderOn = function(baseSelector) {
   window.addEventListener('resize', setPositionByIndex)
 
   // prevent menu popup on long press
-  window.oncontextmenu = function (event) {
+  slider.oncontextmenu = function (event) {
     event.preventDefault()
     event.stopPropagation()
     return false
@@ -91,19 +98,24 @@ const spawnSliderOn = function(baseSelector) {
   }
 
   function scrollEnd(event) {
-    event.preventDefault()
-    event.stopPropagation()
+    result = true
+    console.log(event.deltaY);
+    if (Math.abs(event.deltaY) < verticalSensitivity) {
+      result = false
+      event.preventDefault()
+      event.stopPropagation()
+    }
     cumulativeHorizontalScrollDelta += event.deltaX
     if (allowScrollEventPropagation === false) {
       cumulativeHorizontalScrollDelta = 0
-    } else if (Math.abs(cumulativeHorizontalScrollDelta) >= 100) {
+    } else if (Math.abs(cumulativeHorizontalScrollDelta) >= horizontalSensitivity) {
       allowScrollEventPropagation = false
-      if (cumulativeHorizontalScrollDelta >= 100) {
+      if (cumulativeHorizontalScrollDelta >= horizontalSensitivity) {
         if (currentIndex < slides.length - 1) {
           currentIndex += 1
           setPositionByIndex()
         }
-      } else if (cumulativeHorizontalScrollDelta <= -100) {
+      } else if (cumulativeHorizontalScrollDelta <= -horizontalSensitivity) {
         if (currentIndex > 0) {
           currentIndex -= 1
           setPositionByIndex()
@@ -114,7 +126,7 @@ const spawnSliderOn = function(baseSelector) {
         allowScrollEventPropagation = true
       }, 1000)
     }
-    return false
+    return result
   }
 
   function touchEnd() {
@@ -132,7 +144,7 @@ const spawnSliderOn = function(baseSelector) {
       currentIndex -= 1
     }
 
-    setPositionByIndex()
+    setPositionByIndex(false)
 
     slider.classList.remove('grabbing')
   }
@@ -142,20 +154,29 @@ const spawnSliderOn = function(baseSelector) {
     if (isDragging) requestAnimationFrame(animation)
   }
 
-  function setPositionByIndex() {
-    if (currentIndex == 0) {
-      sliderPrevControl.disabled = true;
-    } else {
-      sliderPrevControl.disabled = false;
+  function setPositionByIndex(doScrollIntoView = true) {
+    if (sliderPrevControl !== null) {
+      if (currentIndex == 0) {
+        sliderPrevControl.disabled = true
+      } else {
+        sliderPrevControl.disabled = false
+      }
     }
-    if (currentIndex == slides.length - 1) {
-      sliderNextControl.disabled = true;
-    } else {
-      sliderNextControl.disabled = false;
+    if (sliderNextControl !== null) {
+      if (currentIndex == slides.length - 1) {
+        sliderNextControl.disabled = true
+      } else {
+        sliderNextControl.disabled = false
+      }
     }
     currentTranslate = currentIndex * -window.innerWidth
     prevTranslate = currentTranslate
+
     setSliderPosition()
+
+    if (doScrollIntoView === true) {
+      slider.scrollIntoView({behavior: "smooth", block: "end", inline: "center"});
+    }
   }
 
   function setSliderPosition() {
