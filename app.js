@@ -1,13 +1,14 @@
-'use strict';
+'use strict'
 const spawnSliderOn = function(baseSelector) {
-  console.log(`Spawning slider: ${baseSelector}`);
+  console.log(`Spawning slider: ${baseSelector}`)
 
   // get our elements
   const slider = document.querySelector(`${baseSelector} .slider-container`),
     slides = Array.from(document.querySelectorAll(`${baseSelector} .slider-container .slide`))
 
   const horizontalSensitivity = 100,
-    verticalSensitivity = 10
+    verticalSensitivity = 5,
+    nextSlideWaitingTime = 750
 
   // set up our state
   let isDragging = false,
@@ -31,7 +32,7 @@ const spawnSliderOn = function(baseSelector) {
   }
 
   if (slides.length >= 2) {
-    sliderNextControl.disabled = false;
+    sliderNextControl.disabled = false
   }
 
   // add our event listeners
@@ -46,9 +47,9 @@ const spawnSliderOn = function(baseSelector) {
       slide.addEventListener('touchmove', touchMove)
       // mouse events
       slide.addEventListener('mousedown', touchStart(index))
-      slide.addEventListener('mouseup', touchEnd)
+      slide.addEventListener('mouseup', mouseUp)
       slide.addEventListener('mousemove', touchMove)
-      slide.addEventListener('mouseleave', touchEnd)
+      slide.addEventListener('mouseleave', mouseLeave)
       // horizontal mouse wheel / touch pad slide events
       slide.addEventListener('wheel', scrollEnd)
     }
@@ -73,7 +74,7 @@ const spawnSliderOn = function(baseSelector) {
     event.stopPropagation()
     if (currentIndex > 0) {
       currentIndex -= 1
-      setPositionByIndex()
+      setPositionByIndex(true)
     }
     return false
   }
@@ -83,7 +84,7 @@ const spawnSliderOn = function(baseSelector) {
     event.stopPropagation()
     if (currentIndex < slides.length - 1) {
       currentIndex += 1
-      setPositionByIndex()
+      setPositionByIndex(true)
     }
     return false
   }
@@ -108,16 +109,18 @@ const spawnSliderOn = function(baseSelector) {
 
   function scrollEnd(event) {
     let result = true
-    console.log(event.deltaY);
     if (Math.abs(event.deltaY) < verticalSensitivity) {
       result = false
       event.preventDefault()
       event.stopPropagation()
+      cumulativeHorizontalScrollDelta += event.deltaX
     }
-    cumulativeHorizontalScrollDelta += event.deltaX
     if (allowScrollEventPropagation === false) {
       cumulativeHorizontalScrollDelta = 0
     } else if (Math.abs(cumulativeHorizontalScrollDelta) >= horizontalSensitivity) {
+      result = false
+      event.preventDefault()
+      event.stopPropagation()
       allowScrollEventPropagation = false
       if (cumulativeHorizontalScrollDelta >= horizontalSensitivity) {
         if (currentIndex < slides.length - 1) {
@@ -131,14 +134,27 @@ const spawnSliderOn = function(baseSelector) {
         }
       }
       window.setTimeout(function() {
-        cumulativeHorizontalScrollDelta = 0
         allowScrollEventPropagation = true
-      }, 1000)
+      }, nextSlideWaitingTime)
     }
     return result
   }
 
   function touchEnd() {
+    endGrab()
+    setPositionByIndex(false)
+  }
+
+  function mouseUp() {
+    endGrab()
+    setPositionByIndex(true)
+  }
+
+  function mouseLeave() {
+    endGrab()
+  }
+
+  function endGrab() {
     cancelAnimationFrame(animationID)
     isDragging = false
     const movedBy = currentTranslate - prevTranslate
@@ -153,8 +169,6 @@ const spawnSliderOn = function(baseSelector) {
       currentIndex -= 1
     }
 
-    setPositionByIndex(false)
-
     slider.classList.remove('grabbing')
   }
 
@@ -163,7 +177,7 @@ const spawnSliderOn = function(baseSelector) {
     if (isDragging) requestAnimationFrame(animation)
   }
 
-  function setPositionByIndex(doScrollIntoView = true) {
+  function setPositionByIndex(doScrollIntoView = false) {
     if (sliderPrevControl !== null) {
       if (currentIndex == 0) {
         sliderPrevControl.disabled = true
@@ -184,7 +198,7 @@ const spawnSliderOn = function(baseSelector) {
     setSliderPosition()
 
     if (doScrollIntoView === true) {
-			document.querySelector(`${baseSelector}`).scrollIntoView({behavior: "smooth", block: "end", inline: "center"});
+      document.querySelector(`${baseSelector}`).scrollIntoView({behavior: "smooth", block: "center", inline: "center"})
     }
   }
 

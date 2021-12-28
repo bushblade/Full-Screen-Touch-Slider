@@ -9,7 +9,6 @@
 }
 
 .slider-container {
-  height: 100vh;
   display: inline-flex;
   overflow: hidden;
   scrollbar-width: none;
@@ -17,10 +16,10 @@
   will-change: transform;
   transition: transform var(--transition-speed) ease-out;
   cursor: grab;
+	cursor: col-resize;
 }
 
 .slide {
-  max-height: 100vh;
   width: 100vw;
   display: flex;
   align-items: center;
@@ -42,7 +41,3 @@
 .grabbing .slide .slide-contents {
   transform: scale(0.97);
 }
-
-
-
-
