@@ -107,7 +107,7 @@ const spawnSliderOn = function(baseSelector) {
   }
 
   function scrollEnd(event) {
-    result = true
+    let result = true
     console.log(event.deltaY);
     if (Math.abs(event.deltaY) < verticalSensitivity) {
       result = false

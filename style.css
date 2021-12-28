@@ -3,13 +3,9 @@
 }
 
 .slider-wrapper {
+  position: relative;
   overflow-x: hidden;
-}
-
-.slider-wrapper * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+  user-select: none;
 }
 
 .slider-container {

@@ -29,9 +29,10 @@ body {
   margin: 0;
 }
 
-.slider-wrapper {
-  user-select: none;
-  position: relative;
+.slider-wrapper * {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 .slider-container {
@@ -112,8 +113,8 @@ body {
 .slider-controls img {
   opacity: .7;
   display: block;
-  width: 2em;
-  height: 2em;
+  width: 1.5em;
+  height: 1.5em;
   overflow: visible;
 }
 
