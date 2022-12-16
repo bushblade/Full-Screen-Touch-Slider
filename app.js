@@ -15,15 +15,11 @@ slides.forEach((slide, index) => {
   const slideImage = slide.querySelector('img')
   // disable default image drag
   slideImage.addEventListener('dragstart', (e) => e.preventDefault())
-  // touch events
-  slide.addEventListener('touchstart', touchStart(index))
-  slide.addEventListener('touchend', touchEnd)
-  slide.addEventListener('touchmove', touchMove)
-  // mouse events
-  slide.addEventListener('mousedown', touchStart(index))
-  slide.addEventListener('mouseup', touchEnd)
-  slide.addEventListener('mousemove', touchMove)
-  slide.addEventListener('mouseleave', touchEnd)
+  // pointer events
+  slide.addEventListener('pointerdown', pointerDown(index))
+  slide.addEventListener('pointerup', pointerUp)
+  slide.addEventListener('pointerleave', pointerUp)
+  slide.addEventListener('pointermove', pointerMove)
 })
 
 // make responsive to viewport changes
@@ -36,29 +32,25 @@ window.oncontextmenu = function (event) {
   return false
 }
 
-function getPositionX(event) {
-  return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX
-}
-
 // use a HOF so we have index in a closure
-function touchStart(index) {
+function pointerDown(index) {
   return function (event) {
     currentIndex = index
-    startPos = getPositionX(event)
+    startPos = event.clientX
     isDragging = true
     animationID = requestAnimationFrame(animation)
     slider.classList.add('grabbing')
   }
 }
 
-function touchMove(event) {
+function pointerMove(event) {
   if (isDragging) {
-    const currentPosition = getPositionX(event)
+    const currentPosition = event.clientX
     currentTranslate = prevTranslate + currentPosition - startPos
   }
 }
 
-function touchEnd() {
+function pointerUp() {
   cancelAnimationFrame(animationID)
   isDragging = false
   const movedBy = currentTranslate - prevTranslate
